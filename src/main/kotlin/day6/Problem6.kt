@@ -1,54 +1,31 @@
 package day6
 
-class Problem6 {
+open class Problem6 {
+    var groupValues = HashSet<Char>()
+    var countAllValues = 0
+
     fun parseFile(fileName: String): Int {
         val files = AdventUtils.getResourceAsText(fileName)
+        countAllValues = 0
 
-        var countAllValues = 0
-
-        val groupValues = HashSet<Char>()
         files.lines().forEach { line ->
             if (line.trim().isEmpty()) {
-                countAllValues += groupValues.size
-                groupValues.clear()
+                finalizeGroup()
             } else {
-                groupValues.addAll(line.toCharArray().toSet())
-                //println("groupValues|countAllValues = ${groupValues.size}|${countAllValues}")
-
+                addToGroup(line.toCharArray().toSet())
             }
         }
-        countAllValues += groupValues.size
+        finalizeGroup()
 
         return countAllValues
     }
 
-    fun parseFileB(fileName: String): Int {
-        val files = AdventUtils.getResourceAsText(fileName)
+    protected open fun addToGroup(valuesToAdd: Set<Char>) {
+        groupValues.addAll(valuesToAdd)
+    }
 
-        var countAllValues = 0
-
-        val groupValues = HashSet<Char>()
-        var firstLoop = true
-        files.lines().forEach { line ->
-            if (line.trim().isEmpty()) {
-                countAllValues += groupValues.size
-                //println("groupValues|countAllValues = ${groupValues.size}|${countAllValues} ${groupValues}")
-
-                groupValues.clear()
-                firstLoop = true
-            } else {
-                if (firstLoop) {
-                    groupValues.addAll(line.toCharArray().toSet())
-                    firstLoop = false
-                } else {
-                    groupValues.retainAll(line.toCharArray().toSet())
-                }
-                //println("groupValues|countAllValues = ${groupValues.size}|${countAllValues}")
-            }
-        }
-        println("groupValues|countAllValues = ${groupValues.size}|${countAllValues}")
+    protected open fun finalizeGroup() {
         countAllValues += groupValues.size
-
-        return countAllValues
+        groupValues.clear()
     }
 }

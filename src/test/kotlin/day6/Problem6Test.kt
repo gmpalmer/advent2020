@@ -15,8 +15,8 @@ internal class Problem6Test {
 
     @Test
     fun problem6b_example() {
-        val problem6 = Problem6()
-        val count = problem6.parseFileB("/day6/example.txt")
+        val problem6 = Problem6B()
+        val count = problem6.parseFile("/day6/example.txt")
         assertEquals(6, count)
         println("count = ${count}")
     }
@@ -30,8 +30,8 @@ internal class Problem6Test {
 
     @Test
     fun problem6B() {
-        val problem6 = Problem6()
-        val count = problem6.parseFileB("/day6/input.txt")
+        val problem6 = Problem6B()
+        val count = problem6.parseFile("/day6/input.txt")
         println("count = ${count}")
     }
 }
