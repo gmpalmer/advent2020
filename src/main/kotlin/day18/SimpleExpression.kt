@@ -7,4 +7,8 @@ class SimpleExpression(val left: Expression, val operation: Operation, val right
             Operation.MULTIPLY -> return left.solve().times(right.solve())
         }
     }
+
+    override fun toString(): String {
+        return "[ $left ${operation.char} $right ]"
+    }
 }
