@@ -1,4 +1,5 @@
 package day18
 
-class Operation {
+enum class Operation {
+    PLUS, MULTIPLY
 }

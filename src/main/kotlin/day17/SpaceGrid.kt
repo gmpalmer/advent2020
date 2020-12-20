@@ -3,7 +3,7 @@ package day17
 import kotlin.math.max
 import kotlin.math.min
 
-class Grid(val startingGrid: List<List<Char>>) {
+class SpaceGrid(val startingGrid: List<List<Char>>) {
     var iteration = 0
     var minZ = 0
     var maxZ = 0

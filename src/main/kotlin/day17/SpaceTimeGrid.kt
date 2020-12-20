@@ -3,7 +3,7 @@ package day17
 import kotlin.math.max
 import kotlin.math.min
 
-class SpaceGrid(val startingGrid: List<List<Char>>) {
+class SpaceTimeGrid(val startingGrid: List<List<Char>>) {
     var iteration = 0
     var minZ = 0
     var maxZ = 0
@@ -11,15 +11,18 @@ class SpaceGrid(val startingGrid: List<List<Char>>) {
     var maxX = startingGrid.lastIndex
     var minY = 0
     var maxY = startingGrid[0].lastIndex
+    var minW = 0
+    var maxW = 0
 
-    var activePoints = HashSet<SpacePoint>()
+    var activePoints = HashSet<SpaceTimePoint>()
 
     init {
         var currZ = 0
+        var currW = 0
         startingGrid.forEachIndexed { currY, row ->
            row.forEachIndexed { currX, c ->
                if(c == '#') {
-                   activePoints.add(SpacePoint(currX, currY, currZ))
+                   activePoints.add(SpaceTimePoint(currX, currY, currZ, currW))
                }
            }
         }
@@ -27,23 +30,26 @@ class SpaceGrid(val startingGrid: List<List<Char>>) {
     override fun toString():String {
         var result = ""
 
-        var pointToCheck = SpacePoint(0,0,0)
-        for(currZ in minZ..maxZ) {
-            pointToCheck.z = currZ
-            result += "z=${currZ}\n"
-            for(currY in minY..maxY) {
-                pointToCheck.y = currY
-                for(currX in minX..maxX) {
-                    pointToCheck.x = currX
-                    if(activePoints.contains(pointToCheck)) {
-                        result += "#"
-                    } else {
-                        result += "."
+        var pointToCheck = SpaceTimePoint(0,0,0, 0)
+        for(currW in minW..maxW) {
+            pointToCheck.w = currW
+            for(currZ in minZ..maxZ) {
+                pointToCheck.z = currZ
+                result += "z=${currZ}, w=${currW}\n"
+                for (currY in minY..maxY) {
+                    pointToCheck.y = currY
+                    for (currX in minX..maxX) {
+                        pointToCheck.x = currX
+                        if (activePoints.contains(pointToCheck)) {
+                            result += "#"
+                        } else {
+                            result += "."
+                        }
                     }
+                    result += "\n"
                 }
-                result+="\n"
+                result += "\n\n"
             }
-            result+="\n\n"
         }
 
         return result
@@ -51,20 +57,23 @@ class SpaceGrid(val startingGrid: List<List<Char>>) {
 
     fun iterate() {
         expandWorld()
-        var newActivePoints = HashSet<SpacePoint>()
+        var newActivePoints = HashSet<SpaceTimePoint>()
 
-        var pointToCheck = SpacePoint(0,0,0)
-        for(currZ in minZ..maxZ) {
+        var pointToCheck = SpaceTimePoint(0,0,0, 0)
+        for(currW in minW..maxW) {
+            pointToCheck.w = currW
+            for(currZ in minZ..maxZ) {
             pointToCheck.z = currZ
             for(currY in minY..maxY) {
                 pointToCheck.y = currY
-                for(currX in minX..maxX) {
+                for (currX in minX..maxX) {
                     pointToCheck.x = currX
 
-                    if(shouldBeActive(pointToCheck)) {
-                        newActivePoints.add(SpacePoint(pointToCheck.x, pointToCheck.y, pointToCheck.z))
+                    if (shouldBeActive(pointToCheck)) {
+                        newActivePoints.add(SpaceTimePoint(pointToCheck.x, pointToCheck.y, pointToCheck.z, pointToCheck.w))
                     }
                 }
+            }
             }
         }
 
@@ -77,9 +86,12 @@ class SpaceGrid(val startingGrid: List<List<Char>>) {
         minX -= 1
         minY -= 1
         minZ -= 1
+        minW -= 1
+
         maxX += 1
         maxY += 1
         maxZ += 1
+        maxW += 1
     }
 
     private fun contractWorld() {
@@ -88,22 +100,27 @@ class SpaceGrid(val startingGrid: List<List<Char>>) {
         minX = firstPoint.x
         minY = firstPoint.y
         minZ = firstPoint.z
+        minW = firstPoint.w
+
         maxX = firstPoint.x
         maxY = firstPoint.y
         maxZ = firstPoint.z
+        maxW = firstPoint.w
 
         activePoints.forEach { point ->
             minX = min(minX, point.x)
             minY = min(minY, point.y)
             minZ = min(minZ, point.z)
+            minW = min(minW, point.w)
 
             maxX = max(maxX, point.x)
             maxY = max(maxY, point.y)
             maxZ = max(maxZ, point.z)
+            maxW = max(maxW, point.w)
         }
     }
 
-    private fun shouldBeActive(pointToCheck: SpacePoint): Boolean {
+    private fun shouldBeActive(pointToCheck: SpaceTimePoint): Boolean {
         var pointsToCheck = pointsToCheck(pointToCheck)
 
         var count = 0
@@ -129,16 +146,25 @@ class SpaceGrid(val startingGrid: List<List<Char>>) {
         return count == 3
     }
 
-    private fun pointsToCheck(pointToCheck: SpacePoint): List<SpacePoint> {
-        var results = ArrayList<SpacePoint>();
+    private fun pointsToCheck(pointToCheck: SpaceTimePoint): List<SpaceTimePoint> {
+        var results = ArrayList<SpaceTimePoint>();
 
-        for(zOffset in -1..1) {
-            for(yOffset in -1..1) {
-                for(xOffset in -1..1) {
-                    if(xOffset == 0 && yOffset == 0 && zOffset ==0) {
-                        continue
+        for(wOffset in -1..1) {
+            for(zOffset in -1..1) {
+                for (yOffset in -1..1) {
+                    for (xOffset in -1..1) {
+                        if (xOffset == 0 && yOffset == 0 && zOffset == 0 && wOffset == 0) {
+                            continue
+                        }
+                        results.add(
+                            SpaceTimePoint(
+                                pointToCheck.x + xOffset,
+                                pointToCheck.y + yOffset,
+                                pointToCheck.z + zOffset,
+                                pointToCheck.w + wOffset
+                            )
+                        )
                     }
-                    results.add(SpacePoint(pointToCheck.x + xOffset, pointToCheck.y + yOffset, pointToCheck.z + zOffset))
                 }
             }
         }
