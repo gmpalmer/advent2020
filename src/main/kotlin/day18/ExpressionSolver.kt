@@ -85,16 +85,7 @@ class ExpressionSolver {
         }
         println("'${leftExpression}' ||| '$rightExpression'")
 
-        val operation = parseOperation(leftExpression.last())
-        leftExpression = leftExpression.substring(0,leftExpression.lastIndex).trim()
-
-        val expression = SimpleExpression(
-            parseLeftExpression(leftExpression).first,
-            operation,
-            Value(rightExpression.toLong())
-        )
-
-        return Pair(expression, "")
+        return handleOperation(Value(rightExpression.toLong()), leftExpression)
     }
 
     private fun handleOpenParen(expression: String): Pair<Expression, String> {

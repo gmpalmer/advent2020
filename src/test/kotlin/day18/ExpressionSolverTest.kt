@@ -97,11 +97,4 @@ internal class ExpressionSolverTest {
         val actual = subject.solve("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2")
         assertEquals(13632L, actual)
     }
-
-    @Test
-    fun test11() {
-        val actual = subject.solve("(2 + 4 * 9) * (6 + 9 * 8 + 6) + 6")
-        assertEquals(13632L, actual)
-
-    }
 }
