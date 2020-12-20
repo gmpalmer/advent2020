@@ -35,4 +35,10 @@ internal class ExpressionSolverTest {
         val actual = subject.solve("1 + 2 * 3")
         assertEquals(9L, actual)
     }
+
+    @Test
+    fun solve_simpleTwoDigitNumbers_withoutparens() {
+        val actual = subject.solve("10 + 20 * 30")
+        assertEquals(900L, actual)
+    }
 }
